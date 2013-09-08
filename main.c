@@ -243,6 +243,7 @@ void onOutMessage(redisAsyncContext *c, void *reply, void *privdata) {
         
 //        copy a redisRelay->str to a NULL terminated string using sprintf
         int len =r->element[r->elements-1]->len;
+	if(len>0){
         char source[len];
         sprintf(source,"%s",r->element[r->elements-1]->str);
        
@@ -269,7 +270,7 @@ void onOutMessage(redisAsyncContext *c, void *reply, void *privdata) {
             }
             
         }
-        
+        }
     }
 }
 
@@ -290,7 +291,7 @@ int main (int argc, char **argv) {
     struct event_base *base = event_base_new();
    
 //    set up connection for sip out
-    out_conn = redisAsyncConnect("127.0.0.1", 6379);
+    out_conn = redisAsyncConnect("223.255.138.226", 6379);
     if (out_conn->err) {
         printf("error: %s\n", out_conn->errstr);
         return 1;
@@ -301,7 +302,7 @@ int main (int argc, char **argv) {
    
     //    set up connection for sip in
     struct timeval timeout = { 1, 500000 };
-    in_conn = redisConnectWithTimeout("127.0.0.1", 6379,timeout);
+    in_conn = redisConnectWithTimeout("223.255.138.226", 6379,timeout);
     if (in_conn->err) {
         printf("error: %s\n", in_conn->errstr);
         return 1;
