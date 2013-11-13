@@ -146,7 +146,7 @@ int add_account(char* sip_user,char* sip_domiain,char* sip_passwd){
     cfg.reg_uri = pj_str(registrar);
     
     cfg.cred_count = 1;
-    cfg.cred_info[0].realm = pj_str(sip_domiain);
+    cfg.cred_info[0].realm = pj_str("*");
     cfg.cred_info[0].scheme = pj_str("digest");
     cfg.cred_info[0].username = pj_str(sip_user);
     cfg.cred_info[0].data_type = PJSIP_CRED_DATA_PLAIN_PASSWD;
@@ -282,7 +282,7 @@ int main (int argc, char **argv) {
 //   sip part
     init_pjsua();
 //    add account
-    add_account("50050","223.255.138.226","50050");
+    add_account("50050","liricco.com","50050");
     
     
     
@@ -291,7 +291,8 @@ int main (int argc, char **argv) {
     struct event_base *base = event_base_new();
    
 //    set up connection for sip out
-    out_conn = redisAsyncConnect("223.255.138.226", 6379);
+//    out_conn = redisAsyncConnect("223.255.138.226", 6379);
+    out_conn = redisAsyncConnect("liricco.com", 6379);
     if (out_conn->err) {
         printf("error: %s\n", out_conn->errstr);
         return 1;
@@ -302,7 +303,8 @@ int main (int argc, char **argv) {
    
     //    set up connection for sip in
     struct timeval timeout = { 1, 500000 };
-    in_conn = redisConnectWithTimeout("223.255.138.226", 6379,timeout);
+//    in_conn = redisConnectWithTimeout("223.255.138.226", 6379,timeout);
+    in_conn = redisConnectWithTimeout("liricco.com", 6379,timeout);
     if (in_conn->err) {
         printf("error: %s\n", in_conn->errstr);
         return 1;
