@@ -290,7 +290,7 @@ int main (int argc, char **argv) {
     const char *sip_pass;
 
     const char *redis_addr;
-    const char *redis_port;
+    const int *redis_port;
 
     config_init(&cfg);
 
@@ -304,27 +304,36 @@ int main (int argc, char **argv) {
     }
 
     /* Get the SIP Config. */
-    setting= config_lookup(&cfg, "sip");
-    if(setting!=NULL){
-
-        if(!config_setting_lookup_string(setting, "sip.port", &sip_port))
-            fprintf(stderr, "No SIP Server Port in configuration file.\n");
-        return(EXIT_FAILURE);
-
-//        if(!config_lookup_string(&cfg, "sip_acc", &sip_acc))
-//            fprintf(stderr, "No SIP Account in configuration file.\n");
-//        return(EXIT_FAILURE);
-//
-//        if(!config_lookup_string(&cfg, "sip_pass", &sip_pass))
-//            fprintf(stderr, "No SIP Server Passowrd in configuration file.\n");
-//        return(EXIT_FAILURE);
-
-
-    }else{
-        fprintf(stderr, "No SIP  in configuration file.\n");
+    if(!config_lookup_string(&cfg,"sip.address",&sip_addr)){
+        fprintf(stderr, "No SIP Server Address in configuration file.\n");
         return(EXIT_FAILURE);
     }
 
+    if(!config_lookup_string(&cfg,"sip.port",&sip_port)){
+        fprintf(stderr, "No SIP Server Port in configuration file.\n");
+        return(EXIT_FAILURE);
+    }
+
+    if(!config_lookup_string(&cfg,"sip.account",&sip_acc)){
+        fprintf(stderr, "No SIP Server Account in configuration file.\n");
+        return(EXIT_FAILURE);
+    }
+    if(!config_lookup_string(&cfg,"sip.password",&sip_pass)){
+        fprintf(stderr, "No SIP Server Password in configuration file.\n");
+        return(EXIT_FAILURE);
+    }
+
+
+    /* Get Redis Config */
+    if(!config_lookup_string(&cfg,"redis.address",&redis_addr)){
+        fprintf(stderr, "No Reids Server Address in configuration file.\n");
+        return(EXIT_FAILURE);
+    }
+
+    if(!config_lookup_int(&cfg,"redis.port",&redis_port)){
+        fprintf(stderr, "No Redis Server Port in configuration file.\n");
+        return(EXIT_FAILURE);
+    }
 
 
 
@@ -332,7 +341,7 @@ int main (int argc, char **argv) {
 //   sip part
     init_pjsua();
 //    add account
-    add_account("50050","liricco.com","50050");
+    add_account(sip_acc,sip_addr,sip_pass);
 
 //    redis part
     signal(SIGPIPE, SIG_IGN);
@@ -340,7 +349,7 @@ int main (int argc, char **argv) {
 
 //    set up connection for sip out
 //    out_conn = redisAsyncConnect("223.255.138.226", 6379);
-    out_conn = redisAsyncConnect("liricco.com", 6379);
+    out_conn = redisAsyncConnect(redis_addr, redis_port);
     if (out_conn->err) {
         printf("error: %s\n", out_conn->errstr);
         return 1;
@@ -352,7 +361,7 @@ int main (int argc, char **argv) {
     //    set up connection for sip in
     struct timeval timeout = { 1, 500000 };
 //    in_conn = redisConnectWithTimeout("223.255.138.226", 6379,timeout);
-    in_conn = redisConnectWithTimeout("liricco.com", 6379,timeout);
+    in_conn = redisConnectWithTimeout(redis_addr,redis_port,timeout);
     if (in_conn->err) {
         printf("error: %s\n", in_conn->errstr);
         return 1;
