@@ -5,7 +5,6 @@
 #include "hiredis/hiredis.h"
 #include "hiredis/async.h"
 #include "hiredis/adapters/libevent.h"
-#include <json/json.h>
 #include <json-c/json.h>
 #include <pjsua-lib/pjsua.h>
 
@@ -189,7 +188,7 @@ void onOutMessage(redisAsyncContext *c, void *reply, void *privdata);
 
 
 
-// pjsua callbacks 
+// pjsua callbacks
 static void on_pager(pjsua_call_id call_id, const pj_str_t *from,
         const pj_str_t *to, const pj_str_t *contact,
         const pj_str_t *mime_type, const pj_str_t *text){
