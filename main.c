@@ -142,7 +142,7 @@ int add_account(char* sip_user,char* sip_domiain,char* sip_passwd){
 
 
     sprintf(id,"sip:%s@%s",sip_user,sip_domiain);
-    sprintf(registrar, "sip:%s;transport=TCP",sip_domiain);
+    sprintf(registrar, "sip:%s;transport=tls",sip_domiain);
 
     cfg.id = pj_str(id);
     cfg.reg_uri = pj_str(registrar);
