@@ -108,12 +108,15 @@ int init_pjsua(){
     }
 
 
-    /* Add TCP transport. */
+    /* Add TCP (TLS) transport. */
     {
         pjsua_transport_config tcp_cfg;
 
         pjsua_transport_config_default(&tcp_cfg);
-        status = pjsua_transport_create(PJSIP_TRANSPORT_TCP, &tcp_cfg, NULL);
+        tcp_cfg.tls_setting.verify_client = PJ_FALSE;
+        tcp_cfg.tls_setting.require_client_cert = PJ_FALSE;
+        tcp_cfg.port = 0;
+        status = pjsua_transport_create(PJSIP_TRANSPORT_TLS, &tcp_cfg, NULL);
         if (status != PJ_SUCCESS) error_exit("Error creating transport", status);
     }
 
